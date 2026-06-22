@@ -333,7 +333,7 @@ else:
         ]
 
 
-    fig = go.Figure(
+fig = go.Figure(
         go.Waterfall(
 
             name="Profit Flow",

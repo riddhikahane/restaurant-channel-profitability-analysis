@@ -85,49 +85,36 @@ Compare profitability across:
 Evaluate margin erosion, commission drag and delivery cost impact.
 """)
 
-# =====================================================
-# TABS
-# =====================================================
-
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Profit Comparison",
-    "Margin Analysis",
-    "Cost Breakdown",
-    "Cuisine & Segment",
-    "What-If Analysis"
-])
 
 # =====================================================
 # TAB 1
 # =====================================================
 
-with tab1:
+st.header("Channel Wise Profit Comparison")
 
-    st.header("Channel Wise Profit Comparison")
+col1, col2, col3, col4 = st.columns(4)
 
-    col1, col2, col3, col4 = st.columns(4)
-
-    col1.metric(
+col1.metric(
         "InStore Profit",
         f"${filtered_df['InStoreNetProfit'].sum():,.0f}"
-    )
+)
 
-    col2.metric(
+col2.metric(
         "Uber Eats Profit",
         f"${filtered_df['UberEatsNetProfit'].sum():,.0f}"
-    )
+)
 
-    col3.metric(
+col3.metric(
         "DoorDash Profit",
         f"${filtered_df['DoorDashNetProfit'].sum():,.0f}"
-    )
+)
 
-    col4.metric(
+col4.metric(
         "Self Delivery Profit",
         f"${filtered_df['SelfDeliveryNetProfit'].sum():,.0f}"
-    )
+)
 
-    profit_df = pd.DataFrame({
+profit_df = pd.DataFrame({
         "Channel": [
             "InStore",
             "UberEats",
@@ -140,23 +127,21 @@ with tab1:
             filtered_df["DoorDashNetProfit"].sum(),
             filtered_df["SelfDeliveryNetProfit"].sum()
         ]
-    })
+})
 
-    st.subheader("Total Net Profit by Channel")
+st.subheader("Total Net Profit by Channel")
 
-    st.bar_chart(
+st.bar_chart(
         profit_df.set_index("Channel")
-    )
+)
 
 # =====================================================
 # TAB 2
 # =====================================================
 
-with tab2:
+st.header("Margin Analysis")
 
-    st.header("Margin Analysis")
-
-    margin_df = pd.DataFrame({
+margin_df = pd.DataFrame({
         "Channel": [
             "InStore",
             "UberEats",
@@ -169,13 +154,13 @@ with tab2:
             filtered_df["DD_Margin_Percent"].mean(),
             filtered_df["SD_Margin_Percent"].mean()
         ]
-    })
+})
 
-    st.bar_chart(
+st.bar_chart(
         margin_df.set_index("Channel")
-    )
+)
 
-    risk_df = pd.DataFrame({
+risk_df = pd.DataFrame({
         "Channel": [
             "InStore",
             "UberEats",
@@ -188,21 +173,20 @@ with tab2:
             filtered_df["DD_Margin_Percent"].std(),
             filtered_df["SD_Margin_Percent"].std()
         ]
-    })
+})
 
-    st.subheader("Margin Volatility")
+st.subheader("Margin Volatility")
 
-    st.dataframe(risk_df, use_container_width=True)
+st.dataframe(risk_df, use_container_width=True)
 
 # =====================================================
 # TAB 3
 # =====================================================
 
-with tab3:
 
-    st.header("Cost Component Breakdown")
+st.header("Cost Component Breakdown")
 
-    cost_df = pd.DataFrame({
+cost_df = pd.DataFrame({
 
         "Revenue": [
             filtered_df["InStoreRevenue"].sum(),
@@ -225,26 +209,26 @@ with tab3:
             filtered_df["SD_OPEX"].sum()
         ]
 
-    },
+},
 
     index=[
         "InStore",
         "UberEats",
         "DoorDash",
         "SelfDelivery"
-    ])
+])
 
-    st.dataframe(cost_df, use_container_width=True)
+st.dataframe(cost_df, use_container_width=True)
 
 
     # ==========================
     # WATERFALL CHART
     # ==========================
 
-    st.subheader("Cost Waterfall Per Channel")
+st.subheader("Cost Waterfall Per Channel")
 
 
-    if selected_channel == "InStore":
+if selected_channel == "InStore":
 
         values = [
             filtered_df["InStoreRevenue"].sum(),
@@ -268,7 +252,7 @@ with tab3:
         ]
 
 
-    elif selected_channel == "UberEats":
+elif selected_channel == "UberEats":
 
         values = [
             filtered_df["UberEatsRevenue"].sum(),
@@ -295,7 +279,7 @@ with tab3:
         ]
 
 
-    elif selected_channel == "DoorDash":
+elif selected_channel == "DoorDash":
 
         values = [
             filtered_df["DoorDashRevenue"].sum(),
@@ -322,7 +306,7 @@ with tab3:
         ]
 
 
-    else:
+else:
 
         values = [
             filtered_df["SelfDeliveryRevenue"].sum(),
@@ -360,31 +344,30 @@ with tab3:
             x=labels,
             y=values
         )
-    )
+)
 
 
-    fig.update_layout(
+fig.update_layout(
 
         title=f"{selected_channel} Cost Waterfall",
 
         height=500
 
-    )
+)
 
 
-    st.plotly_chart(
+st.plotly_chart(
         fig,
         use_container_width=True
-    )
+)
 # =====================================================
 # TAB 4
 # =====================================================
 
-with tab4:
 
-    st.header("Cuisine & Segment Profitability")
+st.header("Cuisine & Segment Profitability")
 
-    cuisine_heatmap = pd.DataFrame({
+cuisine_heatmap = pd.DataFrame({
 
         "InStore":
             filtered_df.groupby("CuisineType")["InStore_Margin_Percent"].mean(),
@@ -398,22 +381,22 @@ with tab4:
         "SelfDelivery":
             filtered_df.groupby("CuisineType")["SD_Margin_Percent"].mean()
 
-    })
+})
 
-    st.subheader("Cuisine Margin Heatmap")
+st.subheader("Cuisine Margin Heatmap")
 
-    fig1, ax1 = plt.subplots(figsize=(10,5))
+fig1, ax1 = plt.subplots(figsize=(10,5))
 
-    sns.heatmap(
+sns.heatmap(
         cuisine_heatmap,
         annot=True,
         cmap="RdYlGn",
         ax=ax1
-    )
+)
 
-    st.pyplot(fig1)
+st.pyplot(fig1)
 
-    segment_heatmap = pd.DataFrame({
+segment_heatmap = pd.DataFrame({
 
         "InStore":
             filtered_df.groupby("Segment")["InStore_Margin_Percent"].mean(),
@@ -427,55 +410,54 @@ with tab4:
         "SelfDelivery":
             filtered_df.groupby("Segment")["SD_Margin_Percent"].mean()
 
-    })
+})
 
-    st.subheader("Segment Margin Heatmap")
+st.subheader("Segment Margin Heatmap")
 
-    fig2, ax2 = plt.subplots(figsize=(8,4))
+fig2, ax2 = plt.subplots(figsize=(8,4))
 
-    sns.heatmap(
+sns.heatmap(
         segment_heatmap,
         annot=True,
         cmap="RdYlGn",
         ax=ax2
-    )
+)
 
-    st.pyplot(fig2)
+st.pyplot(fig2)
 
 # =====================================================
 # TAB 5
 # =====================================================
 
-with tab5:
 
-    st.header("What-If Analysis")
+st.header("What-If Analysis")
 
-    simulated_ue_profit = (
+simulated_ue_profit = (
         filtered_df["UberEatsRevenue"]
         - filtered_df["UberEatsRevenue"] * filtered_df["COGSRate"]
         - filtered_df["UberEatsRevenue"] * filtered_df["OPEXRate"]
         - filtered_df["UberEatsRevenue"] * (commission_rate / 100)
-    ).sum()
+).sum()
 
-    simulated_dd_profit = (
+simulated_dd_profit = (
         filtered_df["DoorDashRevenue"]
         - filtered_df["DoorDashRevenue"] * filtered_df["COGSRate"]
         - filtered_df["DoorDashRevenue"] * filtered_df["OPEXRate"]
         - filtered_df["DoorDashRevenue"] * (commission_rate / 100)
-    ).sum()
+).sum()
 
-    simulated_sd_profit = (
+simulated_sd_profit = (
         filtered_df["SelfDeliveryRevenue"]
         - filtered_df["SelfDeliveryRevenue"] * filtered_df["COGSRate"]
         - filtered_df["SelfDeliveryRevenue"] * filtered_df["OPEXRate"]
         - filtered_df["SD_DeliveryTotalCost"] * delivery_multiplier
-    ).sum()
+).sum()
 
-    simulated_instore_profit = (
+simulated_instore_profit = (
         filtered_df["InStoreNetProfit"].sum()
-    )
+)
 
-    simulation_df = pd.DataFrame({
+simulation_df = pd.DataFrame({
         "Channel": [
             "InStore",
             "UberEats",
@@ -488,12 +470,12 @@ with tab5:
             simulated_dd_profit,
             simulated_sd_profit
         ]
-    })
+})
 
-    st.subheader("Simulated Profit by Channel")
+st.subheader("Simulated Profit by Channel")
 
-    st.bar_chart(
+st.bar_chart(
         simulation_df.set_index("Channel")
-    )
+)
 
-    st.dataframe(simulation_df)
+st.dataframe(simulation_df)
